@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <script src="https://kit.fontawesome.com/2b42ec6388.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            background: #1e1e2f;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body.light-mode {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        .game-container {
+            max-width: 400px;
+            width: 100%;
+            position: relative;
+        }
+
+        h1 {
+            color: #4169E1;
+            position: absolute;
+          top: -13px;
+          left: -7px;
+            font-weight: bold;           
+            font-size: 30px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toggle {
+            background-color: #eee;
+            width: 35px;
+            height: 35px;
+            position: absolute;
+            left: 290px;
+            top: -7px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 50px 20px rgba(0, 0, 0, 0.1);
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .input {
+            display: none;
+        }
+
+        .icon {
+            grid-column: 1 / 1;
+            grid-row: 1 / 1;
+            transition: transform 500ms;
+            line-height: 0.1;
+        }
+
+        .icon--moon {
+            color: #333;
+            transition-delay: 200ms;
+        }
+
+        .icon--sun {
+            color: #333;
+            transform: scale(0);
+        }
+
+        #switch:checked + .icon--moon {
+            transform: rotate(360deg) scale(0);
+        }
+
+        #switch:checked ~ .icon--sun {
+            transition-delay: 200ms;
+            transform: scale(1) rotate(360deg);
+        }
+    
+       body.light-mode .toggle{
+           background: #333;
+       }
+    
+    body.light-mode .icon--sun{
+        color: #eee;
+    }
+    
+    body.light-mode .icon--moon{
+        color: #eee;
+    }
+
+        .mode-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mode1{
+            height: 40px;
+            width: 160px;
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif;
+            color: #4A5568;
+            background-color: #E2E8F0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+    
+       .mode2{
+            height: 40px;
+            width: 160px;
+            position: absolute;
+            top: 50px;
+            left: 170px;
+            border: none;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: 'Rajdhani', sans-serif;
+            color: #4A5568;
+            background-color: #E2E8F0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mode1:hover, .mode2:hover {
+            background: #cbd5e0;
+            transform: translateY(-2px);
+        }
+
+        .mode1.active, .mode2.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .status {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #eee;
+            margin: 20px 0;
+            min-height: 30px;
+            position: absolute;
+            top: 90px;
+            left: 110px;
+        }
+
+        body.light-mode .status {
+            color: #2d3748;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #1B1B1B;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            top: 115px;
+        }
+
+        body.light-mode .game-board {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            background: #2C2C2C;
+            border: none;
+            border-radius: 10px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4a5568;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            min-height: 80px;
+        }
+
+        body.light-mode .cell {
+            background: #f7fafc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .cell:hover:not(.filled) {
+            background: #343434;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        body.light-mode .cell:hover:not(.filled) {
+            background: #edf2f7;
+        }
+
+        .cell.x {
+            color: #e53e3e;
+            background: linear-gradient(135deg, #fed7d7, #feb2b2);
+        }
+    
+    body.light-mode .cell.x {
+        color: #e53e3e;
+        background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    }
+
+        .cell.o {
+            color: #3182ce;
+            background: linear-gradient(135deg, #bee3f8, #90cdf4);
+        }
+
+    body.light-mode .cell.o {
+        color: #3182ce;
+        background: linear-gradient(135deg, #bee3f8, #90cdf4);
+    }
+    
+        .cell.winning {
+            animation: pulse 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .reset-btn {
+            padding: 10px 40px;
+            border: none;
+            border-radius: 25px;
+            background: #48bb78;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 17px;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto 20px;
+            position: relative;
+            top: 110px;
+        }
+
+        .reset-btn:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .score {
+            display: flex;
+            justify-content: space-around;
+            background: #1B1B1B;
+            padding: 1rem;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            top: 110px;
+        }
+
+        body.light-mode .score {
+            background: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .player-label {
+            display: block;
+            font-weight: 600;
+            color: #eee;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        body.light-mode .player-label {
+            color: #2d3748;
+        }
+
+        .score-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #eee;
+        }
+    
+        body.light-mode .score-value {
+            color: #2d3748;
+            background: #f7fafc;
+        }
+
+        .winner {
+            text-align: center;
+            margin: 20px 0;
+            position: absolute;
+        }
+
+        .win {
+            padding: 10px 20px;
+            position: absolute;
+            top: -250px;
+            left: 60px;
+            width: 170px;
+            height: 40px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: #48bb78;
+            color: #eee;
+            display: inline-block;
+            animation: winPulse 0.5s ease-in-out;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        @keyframes winPulse {
+            0% { 
+                transform: scale(0.8); 
+                opacity: 0; 
+            }
+            100% { 
+                transform: scale(1);
+                opacity: 1; 
+            }
+        }
+
+        /* Confetti Animation */
+         .confetti {
+            position: fixed;
+            top: -10px;
+            width: 8px;
+            height: 8px;
+            animation: fall linear forwards;
+            z-index: 1000;
+            border-radius: 2px;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .game-container {
+                padding: 10px;
+            }
+
+            .mode1, .mode2 {
+                width: 140px;
+                font-size: 14px;
+            }
+
+            .cell {
+                font-size: 2rem;
+                min-height: 60px;
+            }
+
+            .status {
+                font-size: 1.1rem;
+            }
+
+            .score {
+                padding: 0.8rem;
+            }
+
+            .player-label {
+                font-size: 0.8rem;
+            }
+
+            .score-value {
+                border-radius: 10px;
+                background: #fff2;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 320px) {
+            .mode1, .mode2 {
+                width: 120px;
+                font-size: 12px;
+            }
+
+            .cell {
+                font-size: 1.5rem;
+                min-height: 50px;
+            }
+        }
+       
+    p1{
+        position: relative;
+        color: #eee;
+        top: 95px;
+        font-weight: 700;
+    }
+    
+    body.light-mode p1{
+        color: #333;       
+    }
+    
+    .social-link{
+       color: #eee; 
+       text-decoration: none;
+    }
+    
+    body.light-mode .social-link{
+        color: #333;
+    }
+    
+    </style>
+
+    <div class="game-container">
+        <h1>Tic Tac Toe</h1>
+
+        <div class="controls">
+            <label for="switch" class="toggle">
+                <input type="checkbox" class="input" id="switch" />
+                <div class="icon icon--moon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+                        <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 01.162.819A8.97 8.97 0 009 6a9 9 0 009 9 8.97 8.97 0 003.463-.69.75.75 0 01.981.98 10.503 10.503 0 01-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 01.818.162z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="icon icon--sun">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+                        <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.166a.75.75 0 00-1.06-1.06l-1.591 1.59a.75.75 0 101.06 1.061l1.591-1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 10-1.061 1.06l1.59 1.591zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.591 1.59a.75.75 0 001.06 1.061l1.591-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.591a.75.75 0 00-1.061 1.06l1.59 1.591z"></path>
+                    </svg>
+                </div>
+            </label>
+
+            <div class="mode-buttons">
+                <button class="mode1 active" id="pvpMode">Player vs Player</button>
+                <button class="mode2" id="pvcMode">Player vs Computer</button>
+            </div>
+        </div>
+
+        <div id="gamestatus" class="status">Player X's turn</div>
+
+        <div class="game-board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+
+        <button id="resetBtn" class="reset-btn">Reset Game</button>
+
+        <div class="score">
+            <div class="score-item">
+                <span class="player-label">Player X</span>
+                <span id="scoreX" class="score-value">0</span>
+            </div>
+            <div class="score-item">
+                <span class="player-label">Player O</span>
+                <span id="scoreO" class="score-value">0</span>
+            </div>
+            <div class="score-item">
+                <span class="player-label">Draw</span>
+                <span id="scoredraw" class="score-value">0</span>
+            </div>
+        </div>
+
+        <div class="winner">
+            <div id="game-winner" class="win" style="display: none;"></div>
+        </div>
+    </div>
+
+    <p1>Made with ♥ by <a href="https://www.instagram.com/ig._.arman7?igsh=MXY5NTcyaG00MmlnZw==" class="social-link">Arman</a></p1>
+    
+ <script>
+    
+     class TicTacToe {
+         constructor() {
+              this.board = ['', '', '', '', '', '', '', '', ''];
+              this.currentPlayer = 'X';
+              this.gameActive = true;
+              this.gameMode = 'pvp'; // 'pvp' or 'pvc'
+              this.scores = { X: 0, O: 0, draw: 0 };
+              
+             this.winningConditions = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                    [0, 4, 8], [2, 4, 6]
+                ];
+
+                this.initializeGame();
+            }
+
+            initializeGame() {
+                this.bindEvents();
+                this.updateDisplay();
+                this.loadScores();
+            }
+
+            bindEvents() {
+                // Cell clicks
+                document.querySelectorAll('.cell').forEach((cell, index) => {
+                    cell.addEventListener('click', () => this.handleCellClick(index));
+                });
+
+                // Reset button
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
+
+                // Mode buttons
+                document.getElementById('pvpMode').addEventListener('click', () => this.setGameMode('pvp'));
+                document.getElementById('pvcMode').addEventListener('click', () => this.setGameMode('pvc'));
+
+                // Theme toggle
+                document.getElementById('switch').addEventListener('change', this.toggleTheme);
+            }
+
+            handleCellClick(index) {
+                if (this.board[index] !== '' || !this.gameActive) return;
+
+                this.makeMove(index, this.currentPlayer);
+
+                if (this.gameMode === 'pvc' && this.gameActive && this.currentPlayer === 'O') {
+                    setTimeout(() => this.computerMove(), 500);
+                }
+            }
+
+            makeMove(index, player) {
+                this.board[index] = player;
+                this.updateCell(index, player);
+                
+                if (this.checkWinner()) {
+                    this.handleGameEnd(player);
+                } else if (this.checkDraw()) {
+                    this.handleGameEnd('draw');
+                } else {
+                    this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
+                    this.updateDisplay();
+                }
+            }
+
+            computerMove() {
+                const availableMoves = this.board
+                    .map((cell, index) => cell === '' ? index : null)
+                    .filter(val => val !== null);
+
+                if (availableMoves.length === 0) return;
+
+                // Try to win
+                let move = this.findBestMove('O');
+                if (move === -1) {
+                    // Try to block player from winning
+                    move = this.findBestMove('X');
+                }
+                if (move === -1) {
+                    // Take center if available
+                    if (availableMoves.includes(4)) {
+                        move = 4;
+                    } else {
+                        // Random move
+                        move = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+                    }
+                }
+
+                this.makeMove(move, 'O');
+            }
+
+            findBestMove(player) {
+                for (let condition of this.winningConditions) {
+                    const [a, b, c] = condition;
+                    const cells = [this.board[a], this.board[b], this.board[c]];
+                    
+                    if (cells.filter(cell => cell === player).length === 2 &&
+                        cells.filter(cell => cell === '').length === 1) {
+                        return condition[cells.indexOf('')];
+                    }
+                }
+                return -1;
+            }
+
+            checkWinner() {
+                for (let condition of this.winningConditions) {
+                    const [a, b, c] = condition;
+                    if (this.board[a] && this.board[a] === this.board[b] && this.board[a] === this.board[c]) {
+                        this.highlightWinningCells(condition);
+                        return this.board[a];
+                    }
+                }
+                return null;
+            }
+
+            checkDraw() {
+                return this.board.every(cell => cell !== '');
+            }
+
+            highlightWinningCells(condition) {
+                condition.forEach(index => {
+                    document.querySelector(`[data-index="${index}"]`).classList.add('winning');
+                });
+            }
+
+            handleGameEnd(result) {
+                this.gameActive = false;
+                let message = '';
+
+                if (result === 'draw') {
+                    message = "It's a Draw!";
+                    this.scores.draw++;
+                } else {
+                    message = `Player ${result} Wins!`;
+                    this.scores[result]++;
+                    this.createConfetti();
+                }
+
+                this.showWinnerMessage(message);
+                this.updateScores();
+                this.saveScores();
+            }
+
+            showWinnerMessage(message) {
+                const winnerDiv = document.getElementById('game-winner');
+                winnerDiv.textContent = message;
+                winnerDiv.style.display = 'inline-block';
+            }
+
+            createConfetti() {
+                const colors = ['#FF0080', '#00FF80', '#8000FF', '#FF4000', '#00BFFF', '#FFD700', '#FF1493', '#00FF00', '#FF6347', '#1E90FF'];
+                
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.classList.add('confetti');
+                        confetti.style.left = Math.random() * window.innerWidth + 'px';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, 4000);
+                    }, i * 20);
+                }
+            }
+
+
+            updateCell(index, player) {
+                const cell = document.querySelector(`[data-index="${index}"]`);
+                cell.textContent = player;
+                cell.classList.add(player.toLowerCase(), 'filled');
+            }
+
+            updateDisplay() {
+                const status = document.getElementById('gamestatus');
+                if (this.gameActive) {
+                    if (this.gameMode === 'pvc' && this.currentPlayer === 'O') {
+                        status.textContent = 'Computer is thinking...';
+                    } else {
+                        status.textContent = `Player ${this.currentPlayer}'s turn`;
+                    }
+                }
+            }
+
+            updateScores() {
+                document.getElementById('scoreX').textContent = this.scores.X;
+                document.getElementById('scoreO').textContent = this.scores.O;
+                document.getElementById('scoredraw').textContent = this.scores.draw;
+            }
+
+            resetGame() {
+                this.board = ['', '', '', '', '', '', '', '', ''];
+                this.currentPlayer = 'X';
+                this.gameActive = true;
+
+                document.querySelectorAll('.cell').forEach(cell => {
+                    cell.textContent = '';
+                    cell.classList.remove('x', 'o', 'winning', 'filled');
+                });
+
+                document.getElementById('game-winner').style.display = 'none';
+                this.updateDisplay();
+            }
+
+            setGameMode(mode) {
+                this.gameMode = mode;
+                this.resetGame();
+
+                document.querySelectorAll('.mode1, .mode2').forEach(btn => btn.classList.remove('active'));
+                
+                if (mode === 'pvp') {
+                    document.getElementById('pvpMode').classList.add('active');
+                } else {
+                    document.getElementById('pvcMode').classList.add('active');
+                }
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('light-mode');
+                localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+            }
+
+            saveScores() {
+                localStorage.setItem('ticTacToeScores', JSON.stringify(this.scores));
+            }
+
+            loadScores() {
+                const savedScores = localStorage.getItem('ticTacToeScores');
+                if (savedScores) {
+                    this.scores = JSON.parse(savedScores);
+                    this.updateScores();
+                }
+
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    document.getElementById('switch').checked = true;
+                }
+            }
+        }
+
+        // Initialize the game when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new TicTacToe();
+        });
+    
+    </script>
+  </body>
+</html>
