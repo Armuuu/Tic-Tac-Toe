@@ -76,6 +76,7 @@
         }
 
         .toggle:hover {
+            cursor: pointer;
             transform: scale(1.1);
         }
 
@@ -163,6 +164,7 @@
         }
 
         .mode1:hover, .mode2:hover {
+            cursor: pointer;
             background: #cbd5e0;
             transform: translateY(-2px);
         }
@@ -229,12 +231,14 @@
         }
 
         .cell:hover:not(.filled) {
+            cursor: pointer;
             background: #343434;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         body.light-mode .cell:hover:not(.filled) {
+            cursor: pointer;
             background: #edf2f7;
         }
 
@@ -285,6 +289,7 @@
         }
 
         .reset-btn:hover {
+            cursor: pointer;
             background: #38a169;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(72, 187, 120, 0.4);
@@ -323,6 +328,7 @@
          }
 
 .score-reset-btn:hover {
+    cursor: pointer;
     background: #c53030;
     transform: scale(1.1);
     box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5);
@@ -483,6 +489,11 @@
     body.light-mode .social-link{
         color: #333;
     }
+
+        .social-link:hover{
+            cursor: pointer;
+            text-decoration: underline;
+        }
     
     </style>
 
