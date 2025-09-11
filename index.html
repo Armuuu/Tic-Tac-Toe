@@ -301,6 +301,32 @@
             position: relative;
             top: 110px;
         }
+    
+        .score-reset-btn {
+           position: absolute;
+           top: -7px;
+           right: -7px;
+           background: #e53e3e;
+           color: white;
+           border: none;
+           border-radius: 50%;
+           width: 35px;
+           height: 35px;
+           font-size: 20px;
+           font-weight: bold;
+           cursor: pointer;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           transition: all 0.3s ease;
+           box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
+         }
+
+.score-reset-btn:hover {
+    background: #c53030;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.5);
+}
 
         body.light-mode .score {
             background: #ffffff;
@@ -500,17 +526,18 @@
 
         <button id="resetBtn" class="reset-btn">Reset Game</button>
 
-        <div class="score">
+        <div class="score">          
+          <button class="score-reset-btn" id="scoreResetBtn" title="Reset All Scores">↻</button>    
             <div class="score-item">
-                <span class="player-label">Player X</span>
+                <span class="player-label" style="font-weight: bold;">Player X</span>
                 <span id="scoreX" class="score-value">0</span>
             </div>
             <div class="score-item">
-                <span class="player-label">Player O</span>
+                <span class="player-label" style="font-weight: bold;">Player O</span>
                 <span id="scoreO" class="score-value">0</span>
             </div>
             <div class="score-item">
-                <span class="player-label">Draw</span>
+                <span class="player-label" style="width: 40px; font-weight: bold;">Draw</span>
                 <span id="scoredraw" class="score-value">0</span>
             </div>
         </div>
@@ -556,6 +583,9 @@
                 // Reset button
                 document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
 
+                // Score reser button
+                document.getElementById('scoreResetBtn').addEventListener('click', () => this.resetScores());
+                
                 // Mode buttons
                 document.getElementById('pvpMode').addEventListener('click', () => this.setGameMode('pvp'));
                 document.getElementById('pvcMode').addEventListener('click', () => this.setGameMode('pvc'));
@@ -563,7 +593,8 @@
                 // Theme toggle
                 document.getElementById('switch').addEventListener('change', this.toggleTheme);
             }
-
+         
+                
             handleCellClick(index) {
                 if (this.board[index] !== '' || !this.gameActive) return;
 
@@ -747,7 +778,13 @@
                 document.body.classList.toggle('light-mode');
                 localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
             }
-
+                    
+            resetScores() {
+                this.scores = { X: 0, O: 0, draw: 0 };
+                this.updateScores();
+                this.saveScores();
+            }                   
+ 
             saveScores() {
                 localStorage.setItem('ticTacToeScores', JSON.stringify(this.scores));
             }
@@ -774,4 +811,4 @@
     
     </script>
   </body>
-</html>
+</html> 
